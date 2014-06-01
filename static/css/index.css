@@ -1,0 +1,137 @@
+* {
+	margin: 0px;
+	padding: 0px;
+}
+header {
+	overflow: hidden;
+}
+#wrapper {
+	padding-top: 10px;
+	width: 960px;
+	font-family: Arial, Helvetica, sans-serif;
+	margin: 0 auto;
+	position:relative;
+}
+#navigationMenu {
+	margin-top: 5px;
+	font-family: Arial, Helvetica, sans-serif;
+}
+#navigationMenu {
+	background: url('/static/imgs/navigation.png') no-repeat;
+	position: relative;
+	width: 960px;
+	height: 42px;
+	float: left;
+}
+.nav {
+	text-decoration: none;
+	color: white;
+	padding: 3px 21px 3px 21px;
+}
+#navMenu {
+	margin:12px 50px 0 12px;
+	width:905px;
+}
+.nav:hover {
+	background-color: rgb(27,162,217);
+	border-radius: 7px 7px;
+}
+#content-box {
+	background: url('/static/imgs/subscribe_form.png') no-repeat;
+	width: 140px;
+	height: 211px;
+	position: fixed;
+	top: 200px;
+	right: 0px;
+	z-index: 50;
+}
+#OpenPanel {
+	float: left;
+	margin: 10px 0 0 0;
+	width: 140px;
+	height: 28px;
+	border-radius: 12px 0 0 12px;
+	text-align: center;
+	cursor: pointer;
+}
+#OpenPanel div {
+	margin: 2px 0 0 0;
+	color: white;
+	font-size: 19px;
+}
+#boxLine {
+	float: left;
+	width: 300px;
+	height: 48px;
+	margin: 10px 0 0 20px;
+	color: rgb(27,162,217);
+	font-size: 20px;
+}
+#emailLine, #id_email, #id_is_parkingowner, #checkLine {
+	float: left;
+}
+#emailLine {
+	margin: 12px 0 0 160px;
+	font-size: 12px;
+}
+#id_email {
+	margin: 2px 0 0 165px;
+	width: 285px;
+	height: 35px;
+	border: none;
+	outline: none;
+	font-size: 15px;
+}
+#id_is_parkingowner {
+	margin: 15px 0 0 160px;
+	font-size: 10px;
+	width: 15px;
+	height: 15px;
+}
+#checkLine {
+	width: 290px;
+	height:34px;
+	margin: 13px 0 0 6px;
+	font-size: 15px;
+}
+#boxContent {
+	visibility: hidden;
+}
+#subscribeButton{
+	float:left;
+	margin:10px 0 0 180px;
+	width:60px;
+}
+#subscribeButton{
+	font-size:13px;
+	width:70px;
+}
+#twitterRef{
+	background: url('/static/imgs/twitter.png') no-repeat;
+	float:right;
+	width:32px;
+	height:32px;
+	margin:-7px 0 0 10px;
+}
+#twitterRef:hover,#facebookRef:hover{
+	opacity:0.8;
+}
+#facebookRef{
+	background: url('/static/imgs/facebook.png') no-repeat;
+	float:right;
+	width:32px;
+	height:32px;
+	margin:-7px 0 0 0;
+}
+#footer {
+	float:left;
+	background: url('/static/imgs/footer_line.png') no-repeat;
+	width: 960px;
+	height: 2px;
+}
+#contacts{
+	background: url('/static/imgs/mail.png') no-repeat;
+	width:960px;
+	height:24px;
+	float:left;
+}

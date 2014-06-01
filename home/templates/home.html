@@ -1,0 +1,327 @@
+{% extends "index.html" %}
+{% block extrahead %}
+<link rel="stylesheet" type="text/css" href="/static/css/home.css" />
+<meta charset="utf-8">
+<script src="http://code.jquery.com/jquery-1.8.2.min.js" type="text/javascript"></script>
+<script src="/static/js/jquery.carouFredSel-6.0.4-packed.js" type="text/javascript"></script>
+{% endblock %}
+{% block content %}
+<p id="pageId" class="home" hidden="hidden"></p>
+<div id="searchPlaceAndPromoEvent">
+	<div id="searchPlace">
+		<h1 id="findParkingLines"><b>Намерете идеалното място за паркиране!</b></h1>
+		<form action="" method="post" id="location">
+			<div id="destination">
+				Дестинация:
+			</div>
+			{% csrf_token %}
+			{{ addressForm.address }}
+			<div id="fromTo">
+				<div>
+					<span id="from">От:</span><span id="to">До:</span>
+				</div>
+				{{ addressForm.from_hour }}
+				{{ addressForm.from_period }}
+				{{ addressForm.from_date }}
+
+				{{ addressForm.to_hour }}
+				{{ addressForm.to_period }}
+				{{ addressForm.to_date }}
+
+				{{ addressForm.lat.as_hidden }}
+				{{ addressForm.lng.as_hidden }}
+			</div>
+			<div id="button">
+				<input type="button" value="Намери" id="submitButton" onclick="getCoordinations()"/>
+				<input type="submit" id="submit" name="addressForm" hidden/>
+			</div>
+		</form>
+	</div>
+	<div id="promoEvent">
+		<div id="news">
+			<div id="carousel">
+				{% for new in newsFeed %}
+				<div class="newsFeed">
+					{{ new.info | safe }}
+				</div>
+				{% endfor %}
+			</div>
+			<div id="pager"></div>
+		</div>
+	</div>
+</div>
+
+<h2 style="font-size:17px;float:left;margin:15px 0 0 430px;">Бърз избор</h2>
+
+<div id="recommendedParkings">
+	<div id="carousel1">
+
+	</div>
+	<div id="pager1"></div>
+	<form hidden action="" method="post" id="subscribe">
+		{% csrf_token %}
+		<div>
+			{{ getHomeParking.id }}
+		</div>
+		<input type='submit' name='idParking' id='showParkingButton' value="id"/>
+	</form>
+</div>
+
+<div><h3 style="font-size:18px;width:800px;float:left;margin:15px 0 0 150px;">От <span><b>Parking</b></span><span class="sector"><b>Sector<span class="dotbg"><b>.</b></span>bg</b></span> искаме да променим начина, по който работят паркингите</h3></div>
+
+<div id="informationDiv">
+	<div id="infoWhy">
+		<div class="infoTitle">
+			Защото
+		</div>
+		<div id="ticks">
+			<span></span><span></span>
+		</div>
+		<div id="text1">
+			Искаме контрол над предизвикателството да намерим място за паркиране
+		</div>
+		<div id="text2">
+			Трябва да сме независими - да паркираме, където и когато ни е удобно
+		</div>
+	</div>
+	<div id="infoWhat">
+		<div class="infoTitle">
+			Като
+		</div>
+		<div id="imgs">
+			<span id="dollar"></span><span id="clock"></span><span id="gas"></span><span id="smile"></span>
+		</div>
+		<div id="text3">
+			Спестяваме пари от високи паркинг тарифи
+		</div>
+		<div id="text4">
+			Пестим време от обикаляне за паркинг място
+		</div>
+		<div id="text5">
+			Спестяваме гориво и избягваме трафика
+		</div>
+		<div id="text6">
+			Имаме сигурност и комфорт, че сме избрали идеалното паркинг място
+		</div>
+	</div>
+	<div id="infoHow">
+		<div class="infoTitle">
+			Затова
+		</div>
+		<div id="created">
+			Създадохме <span><b>Parking</b></span><span class="sector"><b>Sector<span class="dotbg"><b>.</b></span>bg</b></span> - платформа, която позволява:
+		</div>
+		<div id="imgs2">
+			<span id="pointer"></span><span id="tick"></span>
+		</div>
+		<div id="text7">
+			Да намерим всички паркинги около желаната дестинация
+		</div>
+		<div id="text8">
+			Лесно да сравним цени, работно време и допълнителни услуги
+		</div>
+	</div>
+</div>
+<div id="environmentInfo">
+	<div class="envLine">
+		<span><b>Parking</b></span><span class="sector"><b>Sector<span class="dotbg"><b>.</b></span>bg</b></span> се грижи за околната среда
+	</div>
+	<div id="air">
+		<div id="airImage"></div>
+	</div>
+	<div id="traffic">
+		<div id="trafficImage"></div>
+	</div>
+	<div id="co2">
+		<div id="co2Image"></div>
+	</div>
+	<div id="explain">
+		<div id="airLine">
+			<span>По - чист въздух</span>
+			<span style="color:black; font-size:17px;"> в  градовете! Освен, че е досадно и потискащо, да обикаляме в търсене на паркинг място допълнително замърсява околната среда. <span><b>Parking</b></span><span class="sector"><b>Sector<span class="dotbg"><b>.</b></span>bg</b></span> ни спестява това обикаляне, а в резултат на това и намалява замърсяването на въздуха! </span>
+		</div>
+		<div id="trafficLine">
+			<span>По - малко шумни задръствания</span>
+			<span style="color:black; font-size:17px;"> по улиците! <span><b>Parking</b></span><span class="sector"><b>Sector<span class="dotbg"><b>.</b></span>bg</b></span> оптимизира използването на паркинги, което подобрява трафика и намалява възможността за шумни задръствания! </span>
+		</div>
+		<div id="co2Line">
+			<span>По - малко въглероден диоксид </span><span style="color:black; font-size:17px;"> в атмосферата! Използвайки <span><b>Parking</b></span><span class="sector"><b>Sector<span class="dotbg"><b>.</b></span>bg</b></span> изразходвахте по - малко гориво, затова и емисиите на CO2 се редуцират. Нека се борим със стил срещу глобалното
+				затопляне и неговите последици! </span>
+		</div>
+	</div>
+</div>
+<script>
+	$('#location').bind("keyup keypress", function(e) {
+		var code = e.keyCode || e.which;
+		if (code == 13) {
+			e.preventDefault();
+			return false;
+		}
+	});
+	//hrome onenter event
+	$('#id_address').keydown(function(event) {
+		var keypressed = event.keyCode || event.which;
+		if (keypressed == 13) {
+			getCoordinations();
+		}
+	}); 
+</script>
+<script>
+	var parkings = [];
+	var count = -1;
+
+	function load() {
+		var input = (document.getElementById('id_address'));
+		var searchBox = new google.maps.places.Autocomplete(input);
+		var address = document.getElementById("id_address").value;
+		if (address == "")
+			setDate();
+		colorNavElement();
+		readOnly();
+		parseParkings(parkings);
+		loadAll();
+		checkForSubscribe();
+		if (address != "") {
+			getCoordinations();
+		}
+		setFocus();
+	}
+
+	function getCoordinations() {				
+		var address = document.getElementById("id_address").value;
+		var geocoder = new google.maps.Geocoder();
+		if (!checkForProperTimeDuration()) {
+			alert("Часът на излизане не може да предхожда часа на влизане, а престоят е минимум за 1 час!");
+		} else {
+			geocoder.geocode({
+				address : address
+			}, function(results, status) {
+				if (status == google.maps.GeocoderStatus.OK) {
+					document.getElementById('id_lat').value = results[0].geometry.location.lat();
+					document.getElementById('id_lng').value = results[0].geometry.location.lng();
+					document.getElementById('submit').click();
+				}
+			});
+
+		}
+	}
+
+	function loadAll() {
+		var needClose = false;
+		for (var i = 0, len = parkings.length; i < len; ) {
+			if (i < len) {
+				var first = displayParking(parkings[i], "first");
+				i++;
+			} else {
+				break;
+			}
+
+			if (i < len) {
+				var second = displayParking(parkings[i], "second");
+				i++;
+			} else {
+				i = 0;
+				var second = displayParking(parkings[i], "second");
+				needClose = true;
+				i++;
+			}
+
+			if (i < len) {
+				var third = displayParking(parkings[i], "third");
+				i++;
+			} else {
+				i = 0;
+				var third = displayParking(parkings[i], "third");
+				needClose = true;
+				i++;
+			}
+
+			if (i < len) {
+				var fourth = displayParking(parkings[i], "fourth");
+				i++;
+			} else {
+				i = 0;
+				var fourth = displayParking(parkings[i], "fourth");
+				needClose = true;
+			}
+
+			var four = document.createElement('div');
+			four.className = 'fourLine';
+			four.innerHTML = first + second + third + fourth;
+
+			document.getElementById('carousel1').appendChild(four);
+
+			if (needClose)
+				break;
+		};
+		startCarousel('#carousel1', "#pager1");
+	}
+
+	function displayParking(parking, boxNumber) {
+		var image = "<div id='" + boxNumber + "Image" + "'><img class='parkingImg' src='/media/" + parking.image + "'" + "></div>";
+
+		var parkingAddress = parking.address;
+		var address = "<p class='address'>" + parkingAddress + "</p>";
+
+		if (30 < parkingAddress.length && parkingAddress.length <= 85)
+			address = "<p class='smallAddress'>" + parkingAddress + "</p>";
+		if (parkingAddress.length > 85) {
+			parkingAddress = parkingAddress.slice(0, 85);
+			address = "<p class='smallAddress'>" + parkingAddress + "</p>";
+		}
+
+		var priceAndCapacity = "<div class='priceCap'><span class='price'>" + parking.pricePerHour + "</span><span class='priceTag'>лв</span><span class='capacityTag'>места</span><span class='capacity'>" + parking.capacity + "</span></div>";
+		var info = "<div class='" + parking.id + "' style='cursor:pointer;' onclick='showOnMap(this)' id='" + boxNumber + "'><div class='info'>" + image + address + priceAndCapacity + "</div></div>";
+
+		return info;
+	}
+
+	function showOnMap(self) {
+		var id = self.className;
+		document.getElementById('id_id').value = parseInt(id);
+		document.getElementById('showParkingButton').click();
+	}
+</script>
+<script>
+	function startCarousel(name, pager) {
+
+		$(name).carouFredSel({
+			items : 1,
+			scroll : {
+				fx : 'crossfade'
+			},
+			auto : {
+				timeoutDuration : 5000,
+				duration : 2000
+			},
+			pagination : {
+				container : pager,
+				duration : 300
+			}
+		});
+	}
+</script>
+
+<script>
+	$(function() {
+		//var thumbs = $('#thumbscarousel');
+
+		$('#carousel').carouFredSel({
+			items : 1,
+			scroll : {
+				fx : 'crossfade'
+			},
+			auto : {
+				timeoutDuration : 5000,
+				duration : 2000
+			},
+			pagination : {
+				container : '#pager',
+				duration : 300
+			}
+		});
+	}); 
+</script>
+<script>window.onload = load();</script>
+{% endblock %}
+

@@ -1,0 +1,385 @@
+#map {
+	width: 693px;
+	height: 493px;
+	float: left;
+	margin-top: 10px;
+	margin-left: 10px;
+	border: 1px solid grey;
+}
+.controls {
+	margin-top: 16px;
+	border: 1px solid transparent;
+	border-radius: 2px 0 0 2px;
+	box-sizing: border-box;
+	moz-box-sizing: border-box;
+	height: 32px;
+	outline: none;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.pac-container {
+	font-family: Roboto;
+}
+
+#type-selector {
+	color: #fff;
+	background-color: #4d90fe;
+	padding: 5px 11px 0px 11px;
+}
+
+#type-selector label {
+	font-family: Roboto;
+	font-size: 13px;
+	font-weight: 300;
+}
+
+#searchPlace {
+	background: url('/static/imgs/searchPanel2.png') no-repeat;
+	width: 557px;
+	height: 126px;
+	float: left;
+	margin-top: 10px;
+}
+#location {
+	height: 55px;
+}
+#searchPlaceAndFilters {
+	margin: 0px;
+	float: left;
+}
+#id_address {
+	margin-left: 18px;
+	margin-top: 3px;
+	width: 428px;
+	height: 30px;
+	font-size: 16px;
+	border-radius: 4px 4px;
+	padding-left: 10px;
+	border: none;
+	outline: none;
+}
+#destination {
+	margin-left: 18px;
+	margin-top: 13px;
+	font-size:12px;
+}
+#fromTo {
+	margin-top: 13px;
+	margin-left: 20px;
+	float: left;
+	height: 43px;
+}
+#fromTo div{
+	height:19px;
+}
+#to {
+	margin-left: 215px;
+}
+#from,#to{
+	font-size:12px;
+}
+#id_from_hour, #id_to_hour, #id_from_period, #id_to_period {
+	width: 45px;
+	height: 23px;
+	border: none;
+	outline: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	text-indent: 0.01px;
+	text-overflow: '';
+	background: url('/static/imgs/Arrow.png') no-repeat;
+	background-position: right 5px center;
+}
+select::-ms-expand {
+	display: none;
+}
+#id_from_date, #id_to_date {
+	background: url('/static/imgs/calendar.png') no-repeat;
+	background-position: right center;
+	width: 94px;
+	border: none;
+}
+#id_from_period, #id_to_period {
+	margin-left: 6px;
+}
+#id_from_date {
+	margin-left: 8px;
+}
+#id_to_date {
+	margin-left: 8px;
+}
+#id_to_hour {
+	margin-left: 22px;
+}
+#findButton {
+	float: left;
+	margin-top: 30px;
+	margin-left: 20px;
+	padding: 0 4px 0 4px;
+}
+#servicePanel {
+	background: url('/static/imgs/servicesPanel.png') no-repeat;
+	width: 389px;
+	height: 126px;
+	float: left;
+	margin-top: 10px;
+	margin-left: 13px;
+	font-size: 15px;
+}
+
+#firstLayer {
+	margin-top: 15px;
+	margin-left: 18px;
+	width: 389px;
+	height: 18px;
+}
+#firstLayer span {
+	height: 51px;
+}
+
+#secondLayer {
+	margin-top: 15px;
+	margin-left: 18px;
+	width: 389px;
+	height: 18px;
+}
+.unticked {
+	background: url('/static/imgs/serviceIcon.png') no-repeat;
+	padding: 17px;
+	cursor: pointer;
+	width:auto;
+	height: auto;
+}
+#carwash, #personnel, #handicap, #indoor {
+	margin-left: 45px;
+}
+.ticked {
+	background: url('/static/imgs/serviceIconTick.png') no-repeat;
+	padding: 17px;
+	cursor: pointer;
+	width:auto;
+	height: auto;
+}
+#security, #valet, #discount, #suv {
+	margin-left: 45px;
+}
+#services {
+	margin-top: 2px;
+	margin-left: 18px;
+	height: 18px;
+}
+#checkServices {
+	height: 87px;
+}
+#firstLayerLines, #secondLayerLines {
+	margin-left: 18px;
+	height: 18px;
+}
+
+#firstLayerLines span {
+	margin-right: 12px;
+	height: auto;
+	width: auto;
+}
+
+#secondLayerLines span {
+	margin-right: 15px;
+	height: auto;
+	width: auto;
+}
+#parkingList {
+	background: url('/static/imgs/parkingList.png') no-repeat;
+	width: 250px;
+	height: 496px;
+	float: left;
+	margin-top: 10px;
+}
+#list, #price, #distance {
+	float: left;
+}
+#priceAndDistance {
+	width: 250px;
+	float: left;
+	border-bottom: 1px solid grey;
+	padding-bottom: 5px;
+}
+#numberOfParkings {
+
+	float: left;
+	margin-top: 5px;
+	margin-left: 10px;
+}
+#price {
+	float: right;
+	margin-right: 5px;
+	margin-top: 5px;
+	height: 25px;
+	cursor: default;
+}
+#distance {
+	float: right;
+	margin-right: 35px;
+	margin-top: 5px;
+	height: 25px;
+	cursor: default;
+}
+.nonsorted, .ascend {
+	background: url('/static/imgs/arrowInverted.png') no-repeat;
+	background-position: right 10px bottom;
+}
+.descend {
+	background: url('/static/imgs/Arrow.png') no-repeat;
+	background-position: right 10px bottom;
+}
+.filteredParking {
+	float: left;
+	width: 228px;
+	height: auto;
+	cursor: pointer;
+}
+.filteredParking img{
+	width:130px;
+	height:96px;
+}
+.address {
+	width: 225px;
+	float: left;
+	display: block;
+	font-size: 13px;
+	margin: 0 0 0 6px;
+}
+.separator {
+	width: 227px;
+	border-bottom: 1px solid grey;
+	margin-left: 2px;
+	float: left;
+}
+.parkingImage {
+	margin: 3px 0 0 6px;
+	float: left;
+}
+.smallPrice {
+	margin-left: 5px;
+	float: left;
+	font-size: 16px;
+	color: rgb(27,162,217);
+}
+.smallDistance {
+	float: right;
+	font-size: 16px;
+	margin-left: 3px;
+	color: rgb(27,162,217);
+}
+.price {
+	margin-left: 10px;
+	float: left;
+	font-size: 22px;
+	color: rgb(27,162,217);
+}
+.distance {
+	float: left;
+	font-size: 22px;
+	margin-left: 10px;
+	color: rgb(27,162,217);
+}
+.currency {
+	margin-left: 15px;
+	font-size: 18px;
+	float: left;
+	margin-top: -5px;
+}
+.km {
+	font-size: 18px;
+	margin-left: 19px;
+	float: left;
+	margin-top: -5px;
+}
+#filteredParkings {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	width: 247px;
+	height: 457px;
+}
+.infoBox > img {
+	z-index: 999999;
+}
+.labels p {
+	color: white;
+	font-family: Arial, Helvetica, sans-serif;
+	text-align: center;
+	font-size: 15px;
+	width: 60px;
+}
+
+#windowAddress {
+	margin-left: 10px;
+	width: 230px;
+	font-size: 14px;
+}
+#windowSmallAddress {
+	margin-left: 10px;
+	width: 230px;
+	font-size: 11px;
+}
+.windowImage {
+	width:130px;
+	height:96px;
+	margin-left: 10px;
+	float: left;
+}
+#windowPrice, #windowDistance, #windowCapacity {
+	float: left;
+	margin-left: 5px;
+	font-size: 18px;
+}
+#displayedPrice, #displayedDistance, #displayedCapacity {
+	float: right;
+	margin-right: 5px;
+	font-size: 20px;
+	color: rgb(27,162,217);
+}
+#lv, #windowKm {
+	float: right;
+	font-size: 18px;
+	margin-right: 8px;
+}
+#imgAndPrice {
+	margin-top: 5px;
+	float: left;
+}
+#workHours, #capacityPercentage, #paymentMethod {
+	float: left;
+	font-size: 16px;
+	margin-left: 10px;
+}
+#displayedPercentage {
+	color: rgb(27,162,217);
+}
+#displayedHours {
+	float: right;
+	margin-right: 5px;
+	font-size: 16px;
+}
+#displayedPercentage, #displayedMethod {
+	float: right;
+	margin-right: 15px;
+	font-size: 16px;
+}
+#displayedSmallPrice, #displayedSmallDistance {
+	float: right;
+	margin-right: 5px;
+	font-size: 14px;
+	color: rgb(27,162,217);
+}
+.spanlv {
+	font-size: 12px;
+}
+#reminder{
+	position:absolute;
+	top:250px;
+	left:290px;
+	background: url('/static/imgs/price_popUp.png') no-repeat;
+	width:271px;
+	height:123px;
+	z-index: 10000;
+}

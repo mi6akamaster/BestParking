@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Идеалното паркинг място за Вас</title>
+		<link rel="shortcut icon" type="image/png" href="static/imgs/faviconParkingSector.png"/>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+		<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"
+		type="text/javascript"></script>
+		<link rel="stylesheet" type="text/css" href="/static/css/index.css" >
+		<link rel="stylesheet" type="text/css" href="/static/css/findparking.css" >
+		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+		<script src="http://code.jquery.com/jquery-1.7.1.js"></script>
+		<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+		<script src="/static/js/modernizr.js" type="text/javascript"></script>
+		<script>
+				jQuery(function($) {
+				$("#id_from_date").datepicker({
+					changeMonth : true,
+					changeYear : true
+				});
+			});
+			jQuery(function($) {
+				$("#id_to_date").datepicker({
+					changeMonth : true,
+					changeYear : true
+				});
+			});
+			
+			</script>
+		<script>
+		
+			// sets date
+			function setDate() {
+				var date = new Date();
+				var minutes = date.getMinutes();
+
+				if (0 <= minutes && minutes < 15) {
+					document.getElementById('id_from_period').value = 45;
+					document.getElementById('id_to_period').value = 45;
+					document.getElementById('id_from_hour').value = date.getHours();
+					var dateString = date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
+					document.getElementById('id_from_date').value = dateString;
+					date.setHours(date.getHours() + 1);
+					document.getElementById('id_to_hour').value = date.getHours();
+					//	if (parseInt(document.getElementById('id_toHour').value) == 0)
+					//	date.setDate(date.getDate() + 1);
+					dateString = date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
+					document.getElementById('id_to_date').value = dateString;
+				} else if (15 <= minutes && minutes < 30) {
+					document.getElementById('id_from_period').value = 0;
+					document.getElementById('id_to_period').value = 0;
+					date.setHours(date.getHours() + 1);
+					document.getElementById('id_from_hour').value = date.getHours();
+					var dateString = date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
+					document.getElementById('id_from_date').value = dateString;
+					date.setHours(date.getHours() + 1);
+					document.getElementById('id_to_hour').value = date.getHours();
+					//if (parseInt(document.getElementById('id_toHour').value) == 0)
+					//	date.setDate(date.getDate() + 1);
+					dateString = date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
+					document.getElementById('id_to_date').value = dateString;
+				} else if (30 <= minutes && minutes < 45) {
+					document.getElementById('id_from_period').value = 15;
+					document.getElementById('id_to_period').value = 15;
+					date.setHours(date.getHours() + 1);
+					document.getElementById('id_from_hour').value = date.getHours();
+					var dateString = date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
+					document.getElementById('id_from_date').value = dateString;
+					date.setHours(date.getHours() + 1);
+					document.getElementById('id_to_hour').value = date.getHours();
+					//	if (parseInt(document.getElementById('id_toHour').value) == 0)
+					//		date.setDate(date.getDate() + 1);
+					dateString = date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
+					document.getElementById('id_to_date').value = dateString;
+				} else if (45 <= minutes && minutes < 60) {
+					document.getElementById('id_from_period').value = 30;
+					document.getElementById('id_to_period').value = 30;
+					date.setHours(date.getHours() + 1);
+					document.getElementById('id_from_hour').value = date.getHours();
+					var dateString = date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
+					document.getElementById('id_from_date').value = dateString;
+					date.setHours(date.getHours() + 1);
+					document.getElementById('id_to_hour').value = date.getHours();
+					//	if (parseInt(document.getElementById('id_toHour').value) == 0)
+					//		date.setDate(date.getDate() + 1);
+					dateString = date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
+					document.getElementById('id_to_date').value = dateString;
+				}
+			}
+
+			// colors the tab to show which page the user is on
+			function colorNavElement() {
+				if (document.getElementById('pageId').className == "home") {
+					document.getElementById('homeNav').style.backgroundColor = "rgb(27,162,217)";
+					document.getElementById('homeNav').style.borderRadius = "7px";
+				}
+				if (document.getElementById('pageId').className == "findParking") {
+					document.getElementById('findNav').style.backgroundColor = "rgb(27,162,217)";
+					document.getElementById('findNav').style.borderRadius = "7px";
+				}
+				if (document.getElementById('pageId').className == "useful") {
+					document.getElementById('usefulNav').style.backgroundColor = "rgb(27,162,217)";
+					document.getElementById('usefulNav').style.borderRadius = "7px";
+				}
+			}
+
+			// makes some elements read-only
+			function readOnly() {
+				document.getElementById('id_from_date').readOnly = true;
+				document.getElementById('id_to_date').readOnly = true;
+				document.getElementById('id_address').placeholder = "Ще паркирам в близост до ..";
+			}
+
+			function parseParkings(arr) {
+				{% for parking in parkings %}
+				var loadParking = new Object();
+				loadParking.id = "{{ parking.id }}";
+				loadParking.name = "{{parking.name}}";
+				loadParking.address = "{{parking.address}}";
+				loadParking.lat = parseFloat("{{parking.lat}}");
+				loadParking.lng = parseFloat("{{parking.lng}}");
+				loadParking.distance = distance("{{lat}}", "{{lng}}", "{{parking.get_lat}}", "{{parking.get_lng}}");
+				loadParking.image = "{{ parking.image }}";
+				loadParking.capacity = "{{ parking.capacity }}";
+				loadParking.workFrom = "{{ parking.workFrom }}";
+				loadParking.workTo = "{{ parking.workTo }}";
+				loadParking.pricePerHour = "{{ parking.pricePerHour }}";
+				loadParking.paymentmethod = "{{ parking.paymentMethod }}";
+				loadParking.features = parseInt("{{ parking.features }}");
+				arr.push(loadParking);
+				{% endfor %}
+			}
+
+			// calculates the distance between two points
+			function distance(latAddress, lngAddress, lat, lng) {
+				Math.radians = function(degrees) {
+					return degrees * Math.PI / 180;
+				};
+				var R = 6371;
+				// Radius of the earth in km
+				var dLat = Math.radians(lat - latAddress);
+				// Javascript functions in radians
+				var dLon = Math.radians(lng - lngAddress);
+				var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(Math.radians(latAddress)) * Math.cos(Math.radians(lat)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+				var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+				var d = R * c;
+
+				return d;
+			}
+
+			// if departure time is at least 1 hour after arrival time
+			function checkForProperTimeDuration() {
+				var fromHour = parseInt(document.getElementById('id_from_hour').value);
+				var toHour = parseInt(document.getElementById('id_to_hour').value);
+				var fromPeriod = parseInt(document.getElementById('id_from_period').value);
+				var toPeriod = parseInt(document.getElementById('id_to_period').value);
+
+				var dateFrom = document.getElementById('id_from_date').value.split('/');
+				var monthFrom = parseInt(dateFrom[0]) - 1;
+				var dayFrom = parseInt(dateFrom[1]);
+				var yearFrom = parseInt(dateFrom[2]);
+
+				var dateTo = document.getElementById('id_to_date').value.split('/');
+				var monthTo = parseInt(dateTo[0]) - 1;
+				var dayTo = parseInt(dateTo[1]);
+				var yearTo = parseInt(dateTo[2]);
+
+				var starttime = (new Date(yearFrom, monthFrom, dayFrom, fromHour, fromPeriod, 0)).getTime();
+				var endtime = (new Date(yearTo, monthTo, dayTo, toHour, toPeriod, 0)).getTime();
+
+				if (endtime >= starttime && ((endtime / 3600000) - (starttime / 3600000)) >= 1)
+					return true;
+				return false;
+			}
+		</script>
+		<script>
+			$(function() {
+				$("#OpenPanel").click(function() {
+					var el = document.getElementById('content-box');
+					if (el.style.width != "472px") {
+						$("#content-box").animate({
+							'width' : 472
+						}, 350);
+						setTimeout(function() {
+							document.getElementById('boxContent').style.visibility = "visible";
+							document.getElementById('subscribeButton').value = 'subscribe';
+						}, 350);
+					}
+				});
+			});
+
+			$(function() {
+				$("html").click(function() {
+					var el = document.getElementById('content-box');
+					if (el.style.width == "472px") {
+						if (!IsMouseOver('content-box')) {
+							$("#content-box").animate({
+								'width' : 140
+							}, 350);
+							document.getElementById('boxContent').style.visibility = "hidden";
+						}
+					}
+				});
+			});
+
+			$(function() {
+				$("#OpenPanel").click(function() {
+					var el = document.getElementById('content-box');
+					if (el.style.width == "472px") {
+
+						$("#content-box").animate({
+							'width' : 140
+						}, 350);
+						document.getElementById('boxContent').style.visibility = "hidden";
+
+					}
+				});
+			});
+
+			function IsMouseOver(oi) {
+				return $("#" + oi + ":hover").length > 0;
+			}
+			
+			function setFocus() {
+			    document.getElementById("id_address").focus();
+			}
+
+		</script>
+		<script>
+			function checkForSubscribe() {
+				if ("{{ openSubscribe }}" == "shouldOpen") {
+					var el = document.getElementById('content-box');
+					if (el.style.width != "472px") {
+						$("#content-box").animate({
+							'width' : 472
+						}, 350);
+						setTimeout(function() {
+							document.getElementById('boxContent').style.visibility = "visible";
+							document.getElementById('subscribeButton').value = 'subscribe';
+						}, 350);
+					}
+				} else if ("{{ openSubscribe }}" == "openAndRefresh") {
+					var el = document.getElementById('content-box');
+					if (el.style.width != "472px") {
+						$("#content-box").animate({
+							'width' : 472
+						}, 350);
+						setTimeout(function() {
+							document.getElementById('id_email').value = "";
+							document.getElementById('boxContent').style.visibility = "visible";
+							document.getElementById('subscribeButton').value = 'subscribe';
+						}, 350);
+					}
+				}
+			}
+		</script>
+		{% block extrahead %}
+		{% endblock %}
+	</head>
+	<body>
+		<div id="wrapper">
+			<header>
+				<div>
+					<span id="logoImage">
+						<input type="image" src="/static/imgs/Logo.png"/>
+					</span>
+					<span>
+						<input type="image" src="/static/imgs/beta_stamp.png" />
+					</span>
+					<!-- logo line image to be implemented data-href="https://www.facebook.com/IvanKavaldzhievPhotography"-->
+					<!-- register/sign in to be implemented -->
+				</div>
+			</header>
+			<nav>
+				<div id="navigationMenu">
+					<div id="navMenu">
+						<!-- href="http://{{domain}}" -->
+						<a class="nav" id="homeNav" href="/">Начало</a>
+						<a class="nav" id="findNav" href="/findparking/">Намери паркинг</a>
+						<!--<a id="usefulNav" href="http://127.0.0.1:8000/useful/">Полезно</a>-->
+						<a id='twitterRef' href="http://www.youtube.com"></a>
+						<a id="facebookRef" href="http://www.youtube.com"></a>
+					</div>
+				</div>
+			</nav>
+			<div id="content-box">
+				<div id="OpenPanel">
+					<div>
+						Абонирай се!
+					</div>
+				</div>
+				<div id="boxContent">
+					<div id="boxLine">
+						Ако желаеш да си информиран преди останалите!
+					</div>
+					<div id="emailLine">
+						Въведете вашия е-мейл.
+					</div>
+
+					<form action="" method="post" id="subscribe">
+						{% csrf_token %}
+
+						{{ subscribeForm.email }}
+						{{ subscribeForm.is_parkingowner }}
+						<div id="checkLine">
+							<label for="id_is_parkingowner">Кликнете, ако управлявате паркинг и желаете допълнително информация.</label>
+						</div>
+						<input type="submit" id="subscribeButton" name="subsribeForm" value="Намери"/>
+						<p style="float:left;margin:10px 0 0 10px; color: rgb(27,162,217);">
+							{{message}}
+						</p>
+					</form>
+				</div>
+			</div>
+			{% block content %}
+			{% endblock %}
+			<footer>
+				<div style="float:right;margin:10px 0 0 250px;">
+					<div style="float:left;">
+						<iframe src="//www.facebook.com/plugins/like.php?href=https://www.facebook.com/ParkingSector&amp;width&amp;layout=box_count&amp;action=like&amp;show_faces=true&amp;share=false&amp;height=65" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height:65px;width:100px;" allowTransparency="true"></iframe>
+					</div>
+					<div style="float:left;margin-right:40px;">
+						<iframe scrolling="no" frameborder="0" allowtransparency="true" src="https://platform.twitter.com/widgets/tweet_button.1352365724.html#_=1354037601139&amp;count=vertical&amp;id=twitter-widget-3&amp;lang=en&amp;original_referer=https%3A%2F%2Fdev.twitter.com%2Fdocs%2Ftweet-button%2Ffaq%23custom-shortener-count&amp;size=m&amp;text=Намерих елегантното решение на проблема с паркирането ... www.parkingsector.bg&amp;url=https://twitter.com/ParkingSector&amp;" class="twitter-share-button twitter-count-vertical" style="width: 55px; height: 62px;" title="Twitter Tweet Button" data-twttr-rendered="true"></iframe>
+					</div>
+				</div>
+				<div id="contacts"></div>
+				<div id="footer">
+
+				</div>
+				<div style="float:left;text-align:center;width:960px;margin:10px 0 10px 0;">
+					Copyright &copy; 2014
+				</div>
+
+			</footer>
+	</body>
+</html>
