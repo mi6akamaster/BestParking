@@ -77,7 +77,6 @@
 				url : 'ajaxCall/' + lat + "/" + lng,
 				type : 'get', //this is the default though, you don't actually need to always mention it
 				dataType : 'html',
-				data : {Id : 1},
 				//data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
 				beforeSend : function() {
 					$('#map').append("<img id='loadGif' style='position:absolute;margin:230px 0 0 330px;z-index:9000;' src='/static/imgs/ajax-loader.gif' />");
