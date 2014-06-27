@@ -1,5 +1,6 @@
 from django.test import TestCase
 from FindParking.models import ParkingMarker
+from django.core.urlresolvers import reverse
         
 class ModelsReturnFunctions(TestCase):
     def test_getLat_getLng(self):
@@ -34,9 +35,21 @@ class AjaxRequestForParkings(TestCase):
     def test_ajax_with_zero_coordinates(self):
         response = self.client.get('/findparking/ajaxCall/0/0')
         self.assertEqual(response.status_code, 200)
-        
+
+    #from other project    
     def test_ajax_with_negative_coordinates(self):
-        response = self.client.get('/findparking/ajaxCall/-22.1231/-34.123123')
+        kwargs = {'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest',}
+        url = reverse('ajax_call', args=['-1/-213'])
+        response = self.client.get(url, **kwargs)
+        
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, "<><>")
-        print(response.content)
+        self.assertEqual(url, '/ajaxCall/-1/-213')
+        self.assertEqual(response.content, '[]')
+        
+    def test_ajax_with_trivial_coordinates(self):
+        kwargs = {'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest',}
+        url = reverse('ajax_call', args=['42.69753420/23.32075759'])
+        response = self.client.get(url, **kwargs)
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(url, '/ajaxCall/42.69753420/23.32075759')
