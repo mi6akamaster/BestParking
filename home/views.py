@@ -14,7 +14,7 @@ def home(request):
     """
     function that take a request from the website
     and if request is GET then returns html with a form containing base values for 
-    some fields: fromHour, toHour, fromPeriod, toPeriod;
+    some fields: fromHour, toHour, fromPeriod, toPeriod
     if POST then takes the latitude and longitude coordinates of the address that the user has written
     as well as the address, then make SQL requests for near parkings and their features
     finally returns html with selected parkings 
@@ -23,7 +23,7 @@ def home(request):
         return landing_page(request)
     else:
         if 'idParking' in request.POST:
-            return fast_choice_parkings()  
+            return fast_choice_parkings(request)  
         elif 'subsribeForm' in request.POST:
             return subscribe_user(request)
         elif 'addressForm' in request.POST:     
@@ -49,27 +49,35 @@ def fast_choice_parkings(request):
     get_home_parking = GetHomeParking(request.POST)
     
     if get_home_parking.is_valid():
-        parking_id = get_home_parking.cleaned_data['id']
-        parkings = ParkingMarker.objects.filter(onHomePage=True);
-        features = [ParkingFeatures.objects.get(id=parking.features_id) for parking in parkings]
-        paymentMethods = [PaymentMethod.objects.get(id=parking.paymentMethod_id) for parking in parkings]
-        chosen_parking = ParkingMarker.objects.get(id=parking_id)
-        lat = chosen_parking.lat
-        lng = chosen_parking.lng
-        address = chosen_parking.address;
-        context = {'addressForm':address_form,'subscribeForm':subscribe_form,'parkings':parkings,
-                   'chosenParking':chosen_parking,'features':features, 'paymentMethods':paymentMethods,
-                            'address':address, 'lat':lat, 'lng':lng, 'domain':Site.objects.get_current().domain}
-        return render_to_response('findparking.html', context, context_instance=RequestContext(request))
+        #if form is valid redirect to map tempalte and show selected parking
+        return show_picked_parking_on_map(request, subscribe_form, address_form, get_home_parking)
     else:
-        subscribe_form = SubscribeForm();
-        address_form = LocationForm()
-        get_home_parking = GetHomeParking()
-        parkings = ParkingMarker.objects.filter(onHomePage=True);#has to take parkings for homepage
-        news_feed = HomePageNewsFeed.objects.all()
-        context = {'getHomeParking':get_home_parking,'addressFrom':address_form,'subscribeForm':subscribe_form,
-                   'parkings':parkings,'newsFeed':news_feed, 'domain':Site.objects.get_current().domain}
-        return render_to_response('home.html', context, context_instance=RequestContext(request))
+        #else redirect to landing page
+        return render_landing_page(request, subscribe_form, address_form, get_home_parking)
+
+def show_picked_parking_on_map(request, subscribe_form, address_form, get_home_parking):
+    parking_id = get_home_parking.cleaned_data['id']
+    parkings = ParkingMarker.objects.filter(onHomePage=True)
+    features = [ParkingFeatures.objects.get(id=parking.features_id) for parking in parkings]
+    paymentMethods = [PaymentMethod.objects.get(id=parking.paymentMethod_id) for parking in parkings]
+    chosen_parking = ParkingMarker.objects.get(id=parking_id)
+    lat = chosen_parking.lat
+    lng = chosen_parking.lng
+    address = chosen_parking.address
+    context = {'addressForm':address_form,'subscribeForm':subscribe_form,'parkings':parkings,
+                'chosenParking':chosen_parking,'features':features, 'paymentMethods':paymentMethods,
+                'address':address, 'lat':lat, 'lng':lng, 'domain':Site.objects.get_current().domain}
+    return render_to_response('findparking.html', context, context_instance=RequestContext(request))
+
+def render_landing_page(request, subscribe_form, address_form, get_home_parking):
+    subscribe_form = SubscribeForm()
+    address_form = LocationForm()
+    get_home_parking = GetHomeParking()
+    parkings = ParkingMarker.objects.filter(onHomePage=True)#has to take parkings for homepage
+    news_feed = HomePageNewsFeed.objects.all()
+    context = {'getHomeParking':get_home_parking,'addressFrom':address_form,'subscribeForm':subscribe_form,
+                'parkings':parkings,'newsFeed':news_feed, 'domain':Site.objects.get_current().domain}
+    return render_to_response('home.html', context, context_instance=RequestContext(request))
 
 def subscribe_user(request):
     """
@@ -81,38 +89,47 @@ def subscribe_user(request):
     get_home_parking = GetHomeParking()
     try:
         if subscribe_form.is_valid():
-            email = subscribe_form.cleaned_data['email']
-            is_parkingowner = subscribe_form.cleaned_data['is_parkingowner']
-            if is_parkingowner == True:
-                to_add = ParkingOwner.objects.create(email = email)
-                to_add.save()
+            return subscribe_and_return_message(request, subscribe_form, address_form, get_home_parking)
+        else:
+            return show_unvalid_form_message(request, subscribe_form, address_form, get_home_parking)
+    except IntegrityError:
+        return already_exist_message(request, subscribe_form, address_form, get_home_parking)
+
+def subscribe_and_return_message(request, subscribe_form, address_form, get_home_parking):
+    email = subscribe_form.cleaned_data['email']
+    is_parkingowner = subscribe_form.cleaned_data['is_parkingowner']
+    if is_parkingowner == True:
+        to_add = ParkingOwner.objects.create(email = email)
+        to_add.save()
                         #ParkingOwner.objects.
                         #ParkingOwner.save()
                         #send email
-            else:
-                to_add = Viewer.objects.create(email = email)
-                to_add.save()
+    else:
+        to_add = Viewer.objects.create(email = email)
+        to_add.save()
                         #send email
-            parkings = ParkingMarker.objects.filter(onHomePage=True);#has to take parkings for homepage
-            news_feed = HomePageNewsFeed.objects.all();
-            context = {'message':"Благодарим Ви!",'openSubscribe':"openAndRefresh",'getHomeParking':get_home_parking,
+    parkings = ParkingMarker.objects.filter(onHomePage=True)#has to take parkings for homepage
+    news_feed = HomePageNewsFeed.objects.all()
+    context = {'message':"Благодарим Ви!",'openSubscribe':"openAndRefresh",'getHomeParking':get_home_parking,
                         'addressForm':address_form,'subscribeForm':subscribe_form,'parkings':parkings,'newsFeed':news_feed,
                          'domain':Site.objects.get_current().domain}
-            return render_to_response('home.html', context, context_instance=RequestContext(request))
-        else:
-            parkings = ParkingMarker.objects.filter(onHomePage=True)#has to take parkings for homepage
-            news_feed = HomePageNewsFeed.objects.all();
-            context = {'message':"Въведете валиден адрес!",'openSubscribe':"shouldOpen",'getHomeParking':get_home_parking,
+    return render_to_response('home.html', context, context_instance=RequestContext(request))
+
+def show_unvalid_form_message(request, subscribe_form, address_form, get_home_parking):
+    parkings = ParkingMarker.objects.filter(onHomePage=True)#has to take parkings for homepage
+    news_feed = HomePageNewsFeed.objects.all()
+    context = {'message':"Въведете валиден адрес!",'openSubscribe':"shouldOpen",'getHomeParking':get_home_parking,
                        'addressForm':address_form,'subscribeForm':subscribe_form,'parkings':parkings,'newsFeed':news_feed,
                         'domain':Site.objects.get_current().domain}
-            return render_to_response('home.html', context, context_instance=RequestContext(request))
-    except IntegrityError:
-        parkings = ParkingMarker.objects.filter(onHomePage=True);#has to take parkings for homepage
-        news_feed = HomePageNewsFeed.objects.all()
-        context = {'message':"Адресът вече е въведен!",'openSubscribe':"shouldOpen",'getHomeParking':get_home_parking,
+    return render_to_response('home.html', context, context_instance=RequestContext(request))
+
+def already_exist_message(request, subscribe_form, address_form, get_home_parking):
+    parkings = ParkingMarker.objects.filter(onHomePage=True)#has to take parkings for homepage
+    news_feed = HomePageNewsFeed.objects.all()
+    context = {'message':"Адресът вече е въведен!",'openSubscribe':"shouldOpen",'getHomeParking':get_home_parking,
                    'addressForm':address_form,'subscribeForm':subscribe_form,'parkings':parkings,'newsFeed':news_feed,
                     'domain':Site.objects.get_current().domain}
-        return render_to_response('home.html', context, context_instance=RequestContext(request))
+    return render_to_response('home.html', context, context_instance=RequestContext(request))
 
 def search_for_location(request):
     """
@@ -123,15 +140,15 @@ def search_for_location(request):
     address_form = LocationForm(request.POST)
     
     if address_form.is_valid():
-        latAddress = address_form.cleaned_data['lat']
-        lngAddress = address_form.cleaned_data['lng']
+        lat_address = address_form.cleaned_data['lat']
+        lng_address = address_form.cleaned_data['lng']
         address = address_form.cleaned_data['address']
         parkings = [parking for parking in ParkingMarker.objects.all()
-                             if distance([parking.lat, parking.lng], [latAddress, lngAddress]) < 1]
+                             if distance([parking.lat, parking.lng], [lat_address, lng_address]) < 1]
         features = [ParkingFeatures.objects.get(id=parking.features_id) for parking in parkings]
-        payment_methods = [PaymentMethod.objects.get(id=parking.paymentMethod_id) for parking in parkings];
+        payment_methods = [PaymentMethod.objects.get(id=parking.paymentMethod_id) for parking in parkings]
         context = {'addressForm':address_form,'subscribeForm':subscribe_form, 'parkings':parkings, 'features':features,
-                            'paymentMethods':payment_methods, 'address':address, 'lat':latAddress, 'lng':lngAddress,
+                            'paymentMethods':payment_methods, 'address':address, 'lat':lat_address, 'lng':lng_address,
                              'domain':Site.objects.get_current().domain}
         return render_to_response('findparking.html', context , context_instance=RequestContext(request))
     else:
